@@ -16,10 +16,10 @@ class Utilisateur(models.Model):
 
 ###Electric meter
 class Compteur(models.Model):
-    identifiant_compteur = models.IntegerField(primary_key = True) #meter_identifier
-    numero_compteur = models.IntegerField() #meter_number
+    identifiant_compteur = models.BigIntegerField(primary_key = True) #meter_identifier
+    numero_compteur = models.BigIntegerField() #meter_number
     exploitation = models.CharField(max_length = 50) #municipality
-    reference = models.IntegerField() #reference
+    reference = models.BigIntegerField() #reference
     type_client = models.IntegerField() #nature of subscription
     utilisateur = models.ForeignKey(Utilisateur, on_delete = models.CASCADE) #user
 
