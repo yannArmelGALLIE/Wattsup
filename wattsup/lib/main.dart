@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wattsup/pages/authentication/login/login_page.dart';
 import 'package:wattsup/pages/welcome_page/welcome.dart';
 
 void main() {
@@ -14,6 +15,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: WelcomePage(),
+      initialRoute: '/',
+      routes: {
+        '/login': (context) => LoginPage(),
+      },
     );
   }
 }

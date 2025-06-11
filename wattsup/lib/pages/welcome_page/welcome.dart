@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:wattsup/pages/authentication/login/login_page.dart';
 import 'package:wattsup/pages/welcome_page/screens/dot_indicator.dart';
 import 'package:wattsup/pages/welcome_page/screens/on_boarding_screen.dart';
 import 'package:wattsup/utils/theme/colors.dart';
@@ -78,31 +80,64 @@ class _WelcomePageState extends State<WelcomePage> {
                     (index) => Padding(
                       padding: EdgeInsets.only(right: 10),
                       child: DotIndicator(isActive: index == _pageIndex),
-                    )
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.ease,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TColors.orange,
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Icon(
-                        Icons.navigate_next,
-                        color: TColors.primary,
-                        size: 40,
-                      ),
                     ),
                   ),
+                  const Spacer(),
+                  _pageIndex == onBoardingList.length - 1
+                      ? ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TColors.orange,
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Continuer",
+                              style: GoogleFonts.poppins(
+                                color: TColors.textWhite,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Icon(
+                              Icons.navigate_next,
+                              color: TColors.textWhite,
+                              size: 30,
+                            )
+                          ],
+                        ),
+                      )
+                      : SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _pageController.nextPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TColors.orange,
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: Icon(
+                            Icons.navigate_next,
+                            color: TColors.primary,
+                            size: 40,
+                          ),
+                        ),
+                      ),
                 ],
               ),
             ],
@@ -112,4 +147,3 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 }
-
