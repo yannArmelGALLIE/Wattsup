@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wattsup/pages/authentication/register/register_page.dart';
 import 'package:wattsup/pages/welcome_page/welcome.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 
@@ -171,7 +172,12 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                        );
+                    },
                     child: Text(
                       "S'inscrire",
                       style: GoogleFonts.poppins(

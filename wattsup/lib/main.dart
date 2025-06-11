@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wattsup/pages/authentication/login/login_page.dart';
+import 'package:wattsup/pages/authentication/register/register_page.dart';
 import 'package:wattsup/pages/welcome_page/welcome.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/login': (context) => LoginPage(),
+        '/register': (context) => RegisterPage(),
       },
     );
   }
