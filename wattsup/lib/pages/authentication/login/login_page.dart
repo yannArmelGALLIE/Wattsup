@@ -7,11 +7,10 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true, // ✅ important pour éviter l'overflow clavier
+      resizeToAvoidBottomInset: true, 
       backgroundColor: TColors.secondary,
       body: SafeArea(
         child: SingleChildScrollView(
-          // ✅ rend scrollable le contenu quand le clavier s'ouvre
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
