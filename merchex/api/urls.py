@@ -1,11 +1,12 @@
-from django.urls import path
-from .views import UtilisateurGetCreate, UtilisateurUpdateDelete, CompteurGetCreate, CompteurUpdateDelete, MesureGetCreate, MesureUpdateDelete
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UtilisateurViewSet, CompteurViewSet, MesureViewSet
+
+router = DefaultRouter()
+router.register(r'utilisateurs', UtilisateurViewSet)
+router.register(r'compteurs', CompteurViewSet)
+router.register(r'mesures', MesureViewSet)
 
 urlpatterns = [
-    path('utilisateur/', UtilisateurGetCreate.as_view()),
-    path('utilisateur/<int:pk>/', UtilisateurUpdateDelete.as_view()),
-    path('compteur/', CompteurGetCreate.as_view()),
-    path('compteur/<int:pk>/', CompteurUpdateDelete.as_view()),
-    path('mesure/', MesureGetCreate.as_view()),
-    path('mesure/<int:pk>/', MesureUpdateDelete.as_view())
+    path('', include(router.urls)),
 ]

@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 # Create your models here.
 
 ###User 
@@ -14,6 +14,10 @@ class Utilisateur(models.Model):
     def __str__(self):
         return f"{self.nom} {self.prenom}"
 
+
+
+
+
 ###Electric meter
 class Compteur(models.Model):
     identifiant_compteur = models.BigIntegerField(primary_key = True) #meter_identifier
@@ -25,6 +29,15 @@ class Compteur(models.Model):
 
     def __str__(self):
         return f"Compteur {self.numero_compteur} de {self.utilisateur.nom}"
+    
+
+
+
+class Prise(models.Model):
+    identifiant = models.BigAutoField(primary_key=True)
+    compteur = models.ForeignKey(Compteur , on_delete=models.CASCADE)
+    etat = models.BooleanField(default=True)
+
 
 ###Measure
 class Mesure(models.Model):
@@ -38,6 +51,25 @@ class Mesure(models.Model):
         return f"{self.compteur.numero} | {self.timestamp.strftime('%Y-%m-%d %H:%M')} : {self.puissance}W"
 
     
+class Alert(models.Model):
+    TYPES = (('SURCONSO', 'Surconsommation'),
+             ('COUPURE', 'Coupure_de_courant'),
+             )
+    prise = models.ForeignKey(Prise, on_delete=models.CASCADE)
+    type = models.CharField(max_length=40, choices=TYPES)
+    message = models.TextField()
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.type} - {self.message} ({self.date.strftime('%Y-%m-%d %H:%M')})"
 
 
+class HistoriqueConsommation(models.Model):
+    prise = models.ForeignKey(Prise, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
+    conso_totale = models.FloatField()  # Total consumption in kWh
+    conso_journaliere = models.FloatField()  # Daily consumption in kW
 
+
+    def __str__(self):
+        return f"Historique de {self.prise.compteur.numero_compteur} - {self.date.strftime('%Y-%m-%d')} : {self.conso_totale} kWh"
