@@ -11,6 +11,7 @@ configobj==5.0.9
 cryptography==43.0.0
 distro==1.9.0
 Django==4.2.18
+python-decouple==3.2
 httplib2==0.22.0
 idna==3.10
 pexpect==4.9.0
