@@ -34,22 +34,20 @@ class HistoriqueConsommationViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def recevoir_mesure(request):
     try:
-        identifiant_prise = request.data.get('prise_id')
+        identifiant_prise = int(request.data.get('prise_id'))
         tension = float(request.data.get('tension'))
         courant = float(request.data.get('courant'))
         puissance = float(request.data.get('puissance'))
 
-        prise = Prise.objects.get(id=identifiant_prise)
+        prise = Prise.objects.get(identifiant=identifiant_prise)
 
-        # Crée la mesure
         mesure = Mesure.objects.create(
-            prise=prise,
+            compteur=prise.compteur,
             tension=tension,
             courant=courant,
             puissance=puissance
         )
 
-        # Vérifie les alertes
         if puissance > 3000:
             Alert.objects.create(
                 prise=prise,
@@ -64,12 +62,11 @@ def recevoir_mesure(request):
                 message=f"Coupure de courant détectée à {timezone.now().strftime('%H:%M')}"
             )
 
-        # Historique journalier
         jour = timezone.now().date()
         historique, _ = HistoriqueConsommation.objects.get_or_create(
-            prise=prise, date=jour, defaults={'conso_totale': 0}
+            compteur=prise.compteur, date=jour, defaults={'conso_heure': 0, 'conso_journaliere': 0}
         )
-        historique.conso_totale += puissance / 60
+        historique.conso_heure += puissance / 60
         historique.save()
 
         return Response({"message": "Mesure enregistrée."}, status=status.HTTP_201_CREATED)

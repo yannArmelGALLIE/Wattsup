@@ -65,10 +65,12 @@ class Alert(models.Model):
 
 
 class HistoriqueConsommation(models.Model):
-    prise = models.ForeignKey(Prise, on_delete=models.CASCADE)
-    date = models.DateTimeField(default=timezone.now)
-    conso_totale = models.FloatField()  # Total consumption in kWh
-    conso_journaliere = models.FloatField()  # Daily consumption in kW
+    date = models.DateTimeField()
+    conso_heure = models.FloatField()
+    conso_journaliere = models.FloatField(null=True, blank=True)
+    compteur = models.ForeignKey(Compteur, on_delete=models.CASCADE)
+
+    
 
 
     def __str__(self):

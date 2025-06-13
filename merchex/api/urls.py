@@ -13,5 +13,5 @@ router.register(r'historique-consommation', HistoriqueConsommationViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('esp32/recevoir_mesure/', recevoir_mesure),  # Endpoint for ESP32 to send measurements
+    path('api/esp32/recevoir_mesure/', recevoir_mesure, name='recevoir_mesure'), # Endpoint for ESP32 to send measurements
 ]
