@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wattsup/utils/const/consts.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
@@ -16,7 +15,7 @@ class BotPage extends StatefulWidget {
 
 class _BotPageState extends State<BotPage> {
   final _openAI = OpenAI.instance.build(
-    token: OPENAI_API_KEY,
+    token: "",
     baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
     enableLog: true,
   );

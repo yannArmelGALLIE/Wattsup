@@ -63,46 +63,6 @@ class _MainPageState extends State<MainPage>
         _errorMessage(context);
       });
     }
-
-    if ((currentValue / maxProgress) < 0.5) {
-      conseils.add(
-        Conseil(
-          message: "Vous utilisez efficacement l'électricité. Bon travail !",
-          color: TColors.success,
-          icon: Icons.check_circle,
-        ),
-      );
-    }
-    if ((currentValue / maxProgress) < 0.9 &&
-        (currentValue / maxProgress) >= 0.5) {
-      conseils.add(
-        Conseil(
-          message:
-              "Votre consommation dépasse les 50% de la limite maximale. Pensez à identifier les appareils énergivores.",
-          color: TColors.warning,
-          icon: Icons.warning,
-        ),
-      );
-    }
-    if ((currentValue / maxProgress) < 1 &&
-        (currentValue / maxProgress) >= 0.9) {
-      conseils.add(
-        Conseil(
-          message:
-              "Vous êtes proche de votre pic de consommation habituel. Réduisez l'usage des équipements non essentiels.",
-          color: TColors.error,
-          icon: Icons.cancel,
-        ),
-      );
-    } else {
-      conseils.add(
-        Conseil(
-          message: "Attention : consommation très anormale détectée !",
-          color: TColors.error,
-          icon: Icons.cancel,
-        ),
-      );
-    }
   }
 
   @override
@@ -272,21 +232,13 @@ class _MainPageState extends State<MainPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Succès",
+                      "Vous utilisez efficacement l'électricité. Bon travail !",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         color: TColors.success,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    Spacer(),
-                    Text(
-                      "Vous êtes toujours inférieur à votre énergie seuil",
-                      style: GoogleFonts.poppins(
-                        color: TColors.success,
-                        fontSize: 15,
-                      ),
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -321,21 +273,13 @@ class _MainPageState extends State<MainPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Attention",
+                      "Votre consommation dépasse les 50% de la limite maximale. Pensez à identifier les appareils énergivores.",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         color: TColors.warning,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    Spacer(),
-                    Text(
-                      "Votre énergie est supérieur à la moitié de votre énergie seuil",
-                      style: GoogleFonts.poppins(
-                        color: TColors.warning,
-                        fontSize: 15,
-                      ),
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -370,21 +314,13 @@ class _MainPageState extends State<MainPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Attention",
+                      "Vous êtes proche de votre pic de consommation habituel. Réduisez l'usage des équipements non essentiels.",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         color: TColors.error,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    Spacer(),
-                    Text(
-                      "Votre énergie est supérieur à 90% de votre énergie seuil",
-                      style: GoogleFonts.poppins(
-                        color: TColors.error,
-                        fontSize: 15,
-                      ),
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
