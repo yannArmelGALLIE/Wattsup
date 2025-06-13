@@ -75,3 +75,26 @@ class HistoriqueConsommation(models.Model):
 
     def __str__(self):
         return f"Historique de {self.prise.compteur.numero_compteur} - {self.date.strftime('%Y-%m-%d')} : {self.conso_totale} kWh"
+
+
+
+
+
+# Ajoutez ce modèle à votre models.py
+
+class ChatMessage(models.Model):
+    SENDER_CHOICES = (
+        ('USER', 'Utilisateur'),
+        ('BOT', 'ChatBot'),
+    )
+    
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    message = models.TextField()
+    sender = models.CharField(max_length=10, choices=SENDER_CHOICES)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-timestamp']
+    
+    def __str__(self):
+        return f"{self.sender} - {self.utilisateur.nom}: {self.message[:50]}..."
