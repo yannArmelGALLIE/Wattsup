@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wattsup/pages/authentication/register/register_page.dart';
-import 'package:wattsup/pages/welcome_page/welcome.dart';
+import 'package:wattsup/pages/navigation/navigation.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 
 class LoginForm extends StatefulWidget {
@@ -138,9 +138,12 @@ class _LoginFormState extends State<LoginForm> {
               MaterialButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+        _successMessage(context);
+      });
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => WelcomePage()),
+                      MaterialPageRoute(builder: (context) => NavBar()),
                     );
                   }
                 },
@@ -192,6 +195,56 @@ class _LoginFormState extends State<LoginForm> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+   _successMessage(BuildContext context) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 4),
+        content: Container(
+          padding: const EdgeInsets.all(8.0),
+          height: 90,
+          decoration: const BoxDecoration(
+            color: TColors.success,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.check_circle, color: TColors.textWhite, size: 40),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Succès",
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        color: TColors.textWhite,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      "Connexion réussie",
+                      style: GoogleFonts.poppins(
+                        color: TColors.textWhite,
+                        fontSize: 15,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        elevation: 3,
       ),
     );
   }
