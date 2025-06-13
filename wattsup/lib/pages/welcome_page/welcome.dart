@@ -1,147 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wattsup/pages/authentication/login/login_page.dart';
-import 'package:wattsup/pages/welcome_page/screens/dot_indicator.dart';
-import 'package:wattsup/pages/welcome_page/screens/on_boarding_screen.dart';
+import 'package:lottie/lottie.dart';
+import 'package:wattsup/pages/welcome_page/on_boarding_page.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 import 'package:wattsup/utils/theme/lottie.dart';
 
-class WelcomePage extends StatefulWidget {
-  @override
-  State<WelcomePage> createState() => _WelcomePageState();
-}
-
-class _WelcomePageState extends State<WelcomePage> {
-  late PageController _pageController;
-  int _pageIndex = 0;
-
-  @override
-  void initState() {
-    _pageController = PageController(initialPage: 0);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  final List<onBoardingScreen> onBoardingList = [
-    onBoardingScreen(
-      animation: TLottie.anim1,
-      title: "Bienvenue sur",
-      subtitle: "WattsUp",
-    ),
-    onBoardingScreen(
-      animation: TLottie.anim2,
-      title: "Suivis et prediction de la consommation d'energie",
-    ),
-    onBoardingScreen(
-      animation: TLottie.anim3,
-      title: "Historique de la consommation",
-    ),
-    onBoardingScreen(
-      animation: TLottie.anim4,
-      title: "Conseil et amélioration de la consommation d'énergie",
-    ),
-  ];
-
+class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TColors.secondary,
+      backgroundColor: TColors.secondary, // ou ton background défini
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: onBoardingList.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _pageIndex = index;
-                    });
-                  },
-                  itemBuilder:
-                      (context, index) => onBoardingScreen(
-                        animation: onBoardingList[index].animation,
-                        title: onBoardingList[index].title,
-                        subtitle: onBoardingList[index].subtitle,
-                      ),
-                ),
-              ),
-              Row(
-                children: [
-                  ...List.generate(
-                    onBoardingList.length,
-                    (index) => Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: DotIndicator(isActive: index == _pageIndex),
-                    ),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(height: 40), // petit espace top
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Bienvenue sur",
+                  style: GoogleFonts.poppins(
+                    color:
+                        TColors
+                            .textWhite, // textWhite ne se voit pas sur fond blanc
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const Spacer(),
-                  _pageIndex == onBoardingList.length - 1
-                      ? ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: TColors.orange,
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Continuer",
-                              style: GoogleFonts.poppins(
-                                color: TColors.textWhite,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Icon(
-                              Icons.navigate_next,
-                              color: TColors.textWhite,
-                              size: 30,
-                            )
-                          ],
-                        ),
-                      )
-                      : SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _pageController.nextPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease,
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: TColors.orange,
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.zero,
+                ),
+                Text(
+                  "WattsUp",
+                  style: GoogleFonts.lato(
+                    color: TColors.orange,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Lottie.asset(
+                  TLottie.anim1,
+                  width: 550,
+                  height: 500,
+                  fit: BoxFit.contain,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OnBoardingPage(),
                           ),
-                          child: Icon(
-                            Icons.navigate_next,
-                            color: TColors.primary,
-                            size: 40,
-                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TColors.orange,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                ],
-              ),
-            ],
-          ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Continuer",
+                            style: GoogleFonts.poppins(
+                              color: TColors.primary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_right_alt,
+                            color: TColors.primary,
+                            size: 30,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
