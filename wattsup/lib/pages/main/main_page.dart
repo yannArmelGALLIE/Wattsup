@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wattsup/pages/bot/bot_page.dart';
 import 'package:wattsup/pages/main/screens/circle_progress.dart';
+import 'package:wattsup/pages/main/screens/conseil.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 
 class MainPage extends StatefulWidget {
@@ -14,16 +18,17 @@ class _MainPageState extends State<MainPage>
   late Animation<double> _animation;
 
   static const double maxProgress = 10.0;
-  static const double currentValue = 9.5; 
+  static const double currentValue = 1.3;
   static const double prixUnitaireHT = 73.66;
   static const int redevance = 195;
   static const int taxes = 230;
   static const int taxesRTI = 2000;
   static const int timbre = 100;
-  
+
   late int montantHT;
   late int montantTVA;
   late int sommeFinal;
+  late List<Conseil> conseils = [];
   @override
   void initState() {
     super.initState();
@@ -58,6 +63,46 @@ class _MainPageState extends State<MainPage>
         _errorMessage(context);
       });
     }
+
+    if ((currentValue / maxProgress) < 0.5) {
+      conseils.add(
+        Conseil(
+          message: "Vous utilisez efficacement l'électricité. Bon travail !",
+          color: TColors.success,
+          icon: Icons.check_circle,
+        ),
+      );
+    }
+    if ((currentValue / maxProgress) < 0.9 &&
+        (currentValue / maxProgress) >= 0.5) {
+      conseils.add(
+        Conseil(
+          message:
+              "Votre consommation dépasse les 50% de la limite maximale. Pensez à identifier les appareils énergivores.",
+          color: TColors.warning,
+          icon: Icons.warning,
+        ),
+      );
+    }
+    if ((currentValue / maxProgress) < 1 &&
+        (currentValue / maxProgress) >= 0.9) {
+      conseils.add(
+        Conseil(
+          message:
+              "Vous êtes proche de votre pic de consommation habituel. Réduisez l'usage des équipements non essentiels.",
+          color: TColors.error,
+          icon: Icons.cancel,
+        ),
+      );
+    } else {
+      conseils.add(
+        Conseil(
+          message: "Attention : consommation très anormale détectée !",
+          color: TColors.error,
+          icon: Icons.cancel,
+        ),
+      );
+    }
   }
 
   @override
@@ -67,143 +112,160 @@ class _MainPageState extends State<MainPage>
   }
 
   @override
-Widget build(BuildContext context) {
-  return SafeArea(
-    child: Scaffold(
-      backgroundColor: TColors.secondary,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Bonsoir GALLIE",
-                    style: GoogleFonts.poppins(
-                      color: TColors.orange,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Icon(Icons.notifications, color: TColors.orange, size: 36),
-                ],
-              ),
-            ),
-
-            // --- Premier rectangle (Consommation + cercle)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: TColors.orange,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: TColors.secondary,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Consommation",
+                      "Bonsoir GALLIE",
                       style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
-                        fontSize: 22,
+                        color: TColors.orange,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: CustomPaint(
-                        foregroundPainter: CircleProgress(_animation.value),
-                        child: Container(
-                          width: 250,
-                          height: 250,
-                          child: Center(
-                            child: Text(
-                              "${currentValue.toStringAsFixed(1)} kW/h",
-                              style: GoogleFonts.poppins(
-                                color: TColors.textWhite,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                    TextButton(
+                      onPressed: () {
+                        Get.to(() => BotPage());
+                      },
+                      child: Text(
+                        "Chat Bot AI",
+                        style: GoogleFonts.poppins(
+                          color: TColors.textWhite,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
 
-            // --- Deuxième rectangle (Infos prix et seuil)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: TColors.orange,
-                  borderRadius: BorderRadius.circular(20),
+              // --- Premier rectangle (Consommation + cercle)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10,
                 ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Détails",
-                      style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: TColors.orange,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Consommation",
+                        style: GoogleFonts.poppins(
+                          color: TColors.textWhite,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Énergie seuil : ${maxProgress.toStringAsFixed(1)} kW/h",
-                      style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 20),
+                      Center(
+                        child: CustomPaint(
+                          foregroundPainter: CircleProgress(_animation.value),
+                          child: Container(
+                            width: 250,
+                            height: 250,
+                            child: Center(
+                              child: Text(
+                                "${currentValue.toStringAsFixed(1)} kW/h",
+                                style: GoogleFonts.poppins(
+                                  color: TColors.textWhite,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Montant total à payer : ${sommeFinal.toStringAsFixed(1)} FCFA",
-                      style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              // --- Deuxième rectangle (Infos prix et seuil)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10,
+                ),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: TColors.orange,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Détails",
+                        style: GoogleFonts.poppins(
+                          color: TColors.textWhite,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "Énergie seuil : ${maxProgress.toStringAsFixed(1)} kW/h",
+                        style: GoogleFonts.poppins(
+                          color: TColors.textWhite,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Montant total à payer : ${sommeFinal.toStringAsFixed(1)} FCFA",
+                        style: GoogleFonts.poppins(
+                          color: TColors.textWhite,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   _successMessage(BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(seconds: 4),
+        duration: Duration(seconds: 3),
         content: Container(
           padding: const EdgeInsets.all(8.0),
           height: 90,
-          decoration: const BoxDecoration(
-            color: TColors.success,
+          decoration: BoxDecoration(
+            color: TColors.success.withOpacity(0.15),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Row(
             children: [
-              Icon(Icons.check_circle, color: TColors.textWhite, size: 40),
+              Icon(Icons.check_circle, color: TColors.success, size: 40),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -213,7 +275,7 @@ Widget build(BuildContext context) {
                       "Succès",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
-                        color: TColors.textWhite,
+                        color: TColors.success,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -221,7 +283,7 @@ Widget build(BuildContext context) {
                     Text(
                       "Vous êtes toujours inférieur à votre énergie seuil",
                       style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
+                        color: TColors.success,
                         fontSize: 15,
                       ),
                       maxLines: 2,
@@ -234,7 +296,6 @@ Widget build(BuildContext context) {
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
         elevation: 3,
       ),
     );
@@ -243,17 +304,17 @@ Widget build(BuildContext context) {
   _warningMessage(BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(seconds: 4),
+        duration: Duration(seconds: 3),
         content: Container(
           padding: const EdgeInsets.all(8.0),
           height: 90,
-          decoration: const BoxDecoration(
-            color: TColors.warning,
+          decoration: BoxDecoration(
+            color: TColors.warning.withOpacity(0.15),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Row(
             children: [
-              Icon(Icons.warning, color: TColors.textWhite, size: 40),
+              Icon(Icons.warning, color: TColors.warning, size: 40),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -263,7 +324,7 @@ Widget build(BuildContext context) {
                       "Attention",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
-                        color: TColors.textWhite,
+                        color: TColors.warning,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -271,7 +332,7 @@ Widget build(BuildContext context) {
                     Text(
                       "Votre énergie est supérieur à la moitié de votre énergie seuil",
                       style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
+                        color: TColors.warning,
                         fontSize: 15,
                       ),
                       maxLines: 2,
@@ -284,7 +345,6 @@ Widget build(BuildContext context) {
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
         elevation: 3,
       ),
     );
@@ -293,17 +353,17 @@ Widget build(BuildContext context) {
   _errorMessage(BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(seconds: 4),
+        duration: Duration(seconds: 3),
         content: Container(
           padding: const EdgeInsets.all(8.0),
           height: 90,
-          decoration: const BoxDecoration(
-            color: TColors.error,
+          decoration: BoxDecoration(
+            color: TColors.error.withOpacity(0.15),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Row(
             children: [
-              Icon(Icons.cancel, color: TColors.textWhite, size: 40),
+              Icon(Icons.cancel, color: TColors.error, size: 40),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -313,7 +373,7 @@ Widget build(BuildContext context) {
                       "Attention",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
-                        color: TColors.textWhite,
+                        color: TColors.error,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -321,7 +381,7 @@ Widget build(BuildContext context) {
                     Text(
                       "Votre énergie est supérieur à 90% de votre énergie seuil",
                       style: GoogleFonts.poppins(
-                        color: TColors.textWhite,
+                        color: TColors.error,
                         fontSize: 15,
                       ),
                       maxLines: 2,
@@ -334,7 +394,6 @@ Widget build(BuildContext context) {
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
         elevation: 3,
       ),
     );
