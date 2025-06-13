@@ -202,7 +202,7 @@ class _LoginFormState extends State<LoginForm> {
    _successMessage(BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(seconds: 10),
+        duration: Duration(seconds: 4),
         content: Container(
           padding: const EdgeInsets.all(8.0),
           height: 90,
