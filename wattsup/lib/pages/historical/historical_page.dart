@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:wattsup/pages/historical/screens/custom_histogram.dart';
 import 'package:wattsup/pages/historical/screens/tab_bar.dart';
+import 'package:wattsup/providers/mesure_provider.dart';
 import 'package:wattsup/utils/models/bar_chart_model.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 
-class HistoricalPage extends StatelessWidget {
+class HistoricalPage extends StatefulWidget {
   HistoricalPage({super.key});
+
+  @override
+  State<HistoricalPage> createState() => _HistoricalPageState();
+}
+
+class _HistoricalPageState extends State<HistoricalPage> {
+  @override
+  Widget build(BuildContext context) {
+    final mesure = Provider.of<MesureProvider>(context).mesure;
 
   final List<BarChartModel> dataMois = [
     BarChartModel(axeY: "Jan", consommation: 25, color: TColors.orange),
@@ -14,14 +25,14 @@ class HistoricalPage extends StatelessWidget {
     BarChartModel(axeY: "Mar", consommation: 48, color: TColors.orange),
     BarChartModel(axeY: "Avr", consommation: 34, color: TColors.orange),
     BarChartModel(axeY: "Mai", consommation: 35, color: TColors.orange),
-    BarChartModel(axeY: "Juin", consommation: 54, color: TColors.orange),
+    BarChartModel(axeY: "Juin", consommation: mesure!.puissance.round(), color: TColors.orange),
   ];
 
   final List<BarChartModel> dataSemaine = [
     BarChartModel(axeY: "Sem1", consommation: 25, color: TColors.orange),
-    BarChartModel(axeY: "Sem2", consommation: 28, color: TColors.orange),
-    BarChartModel(axeY: "Sem3", consommation: 15, color: TColors.orange),
-    BarChartModel(axeY: "Sem4", consommation: 34, color: TColors.orange),
+    BarChartModel(axeY: "Sem2", consommation: mesure.puissance.round(), color: TColors.orange),
+    BarChartModel(axeY: "Sem3", consommation: 0, color: TColors.orange),
+    BarChartModel(axeY: "Sem4", consommation: 0, color: TColors.orange),
   ];
 
   final List<BarChartModel> dataJour = [
@@ -30,8 +41,8 @@ class HistoricalPage extends StatelessWidget {
     BarChartModel(axeY: "Mer", consommation: 15, color: TColors.orange),
     BarChartModel(axeY: "Jeu", consommation: 34, color: TColors.orange),
     BarChartModel(axeY: "Ven", consommation: 35, color: TColors.orange),
-    BarChartModel(axeY: "Sam", consommation: 19, color: TColors.orange),
-    BarChartModel(axeY: "Dim", consommation: 19, color: TColors.orange),
+    BarChartModel(axeY: "Sam", consommation: mesure.puissance.round(), color: TColors.orange),
+    BarChartModel(axeY: "Dim", consommation: 0, color: TColors.orange),
   ];
 
   final List<BarChartModel> dataHeure = [
@@ -42,8 +53,6 @@ class HistoricalPage extends StatelessWidget {
     BarChartModel(axeY: "15H", consommation: 35, color: TColors.orange),
     BarChartModel(axeY: "16H", consommation: 19, color: TColors.orange),
   ];
-  @override
-  Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
       child: Scaffold(

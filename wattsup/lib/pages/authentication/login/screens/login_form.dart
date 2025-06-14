@@ -1,9 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:wattsup/models/user.dart';
 import 'package:wattsup/pages/authentication/register/register_page.dart';
 import 'package:wattsup/pages/navigation/navigation.dart';
+import 'package:wattsup/providers/user_provider.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 import 'package:wattsup/constants/api.dart';
 import 'package:http/http.dart' as http;
@@ -54,6 +56,7 @@ class _LoginFormState extends State<LoginForm> {
     );
 
     if (user != null) {
+      Provider.of<UserProvider>(context, listen: false).setUser(user);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _successMessage(context);
       });
