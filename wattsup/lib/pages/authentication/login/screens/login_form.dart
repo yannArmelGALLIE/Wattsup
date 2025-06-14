@@ -299,7 +299,7 @@ class _LoginFormState extends State<LoginForm> {
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.transparent,
-        elevation: 3,
+        elevation: 10,
       ),
     );
   }

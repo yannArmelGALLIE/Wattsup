@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:wattsup/constants/api.dart';
 import 'package:wattsup/utils/theme/colors.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
-import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 
 class BotPage extends StatefulWidget {
   const BotPage({Key? key}) : super(key: key);
@@ -14,12 +17,6 @@ class BotPage extends StatefulWidget {
 }
 
 class _BotPageState extends State<BotPage> {
-  final _openAI = OpenAI.instance.build(
-    token: "",
-    baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
-    enableLog: true,
-  );
-
   final ChatUser _currentUser = ChatUser(
     id: "1",
     firstName: "Yann-Armel",
@@ -28,8 +25,8 @@ class _BotPageState extends State<BotPage> {
 
   final ChatUser _gptChatUser = ChatUser(
     id: "2",
-    firstName: "Chat",
-    lastName: "GPT",
+    firstName: "WattsUp",
+    lastName: "Bot",
   );
 
   List<ChatMessage> _messages = <ChatMessage>[];
@@ -53,7 +50,7 @@ class _BotPageState extends State<BotPage> {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    "Chat Bot AI",
+                    "WattsUp Bot AI",
                     style: GoogleFonts.poppins(
                       color: TColors.orange,
                       fontSize: 18,
@@ -93,35 +90,61 @@ class _BotPageState extends State<BotPage> {
       _messages.insert(0, m);
       _typingUser.add(_gptChatUser);
     });
-    final _messagesHistory =
-        _messages.reversed.map((m) {
-          if (m.user == _currentUser) {
-            return {'role': 'user', 'content': m.text};
-          } else {
-            return {'role': 'assistant', 'content': m.text};
-          }
-        }).toList();
 
-    final request = ChatCompleteText(
-      model: GptTurbo0301ChatModel(),
-      messages: _messagesHistory,
-      maxToken: 200,
-    );
-    final response = await _openAI.onChatCompletion(request: request);
-    for (var element in response!.choices) {
-      if (element.message != null) {
+    // Remplace ici par l’URL de ton API
+    final apiUrl = '$api/api/chat/';
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "utilisateur_id": "1", 
+          "message": m.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final botMessage = data["bot_response"] ?? "Erreur de réponse";
+
         setState(() {
           _messages.insert(
             0,
             ChatMessage(
               user: _gptChatUser,
               createdAt: DateTime.now(),
-              text: element.message!.content,
+              text: botMessage,
+            ),
+          );
+        });
+      } else {
+        print("Erreur API : ${response.body}");
+        setState(() {
+          _messages.insert(
+            0,
+            ChatMessage(
+              user: _gptChatUser,
+              createdAt: DateTime.now(),
+              text: "Erreur lors de la communication avec le serveur.",
             ),
           );
         });
       }
+    } catch (e) {
+      print("Exception: $e");
+      setState(() {
+        _messages.insert(
+          0,
+          ChatMessage(
+            user: _gptChatUser,
+            createdAt: DateTime.now(),
+            text: "Erreur réseau ou serveur injoignable.",
+          ),
+        );
+      });
     }
+
     setState(() {
       _typingUser.remove(_gptChatUser);
     });

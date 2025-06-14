@@ -203,7 +203,7 @@ void fetchMeasuresForCompteur(int compteurId) async {
                         Get.to(() => BotPage());
                       },
                       child: Text(
-                        "Chat Bot AI",
+                        "WattsUp Bot",
                         style: GoogleFonts.poppins(
                           color: TColors.textWhite,
                           fontSize: 15,
@@ -380,7 +380,7 @@ void fetchMeasuresForCompteur(int compteurId) async {
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        elevation: 3,
+        elevation: 10,
       ),
     );
   }
@@ -421,7 +421,7 @@ void fetchMeasuresForCompteur(int compteurId) async {
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        elevation: 3,
+        elevation: 10,
       ),
     );
   }
@@ -462,7 +462,7 @@ void fetchMeasuresForCompteur(int compteurId) async {
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        elevation: 3,
+        elevation: 10,
       ),
     );
   }
