@@ -1,8 +1,13 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wattsup/models/user.dart';
 import 'package:wattsup/pages/authentication/register/register_page.dart';
 import 'package:wattsup/pages/navigation/navigation.dart';
 import 'package:wattsup/utils/theme/colors.dart';
+import 'package:wattsup/constants/api.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -16,6 +21,59 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscureText = true;
+
+  List<User> myUsers = [];
+
+  void fetchData() async {
+    try {
+      http.Response response = await http.get(Uri.parse("$api/utilisateurs/"));
+      var data = json.decode(response.body);
+      data["results"].forEach((user) {
+        User u = User(
+          identifiant: user["identifiant"],
+          nom: user["nom"],
+          prenom: user["prenom"],
+          email: user["email"],
+          numero_tel: user["numero_tel"],
+          mot_de_passe: user["mot_de_passe"],
+        );
+        myUsers.add(u);
+      });
+      print(myUsers);
+    } catch (e) {
+      print("Error is $e");
+    }
+  }
+
+  void checkLogin() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final user = myUsers.firstWhereOrNull(
+      (u) => u.email == email && u.mot_de_passe == password,
+    );
+
+    if (user != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _successMessage(context);
+      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NavBar()),
+      );
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _errorMessage(context);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -138,13 +196,7 @@ class _LoginFormState extends State<LoginForm> {
               MaterialButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-        _successMessage(context);
-      });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NavBar()),
-                    );
+                    checkLogin();
                   }
                 },
                 height: 45,
@@ -179,7 +231,7 @@ class _LoginFormState extends State<LoginForm> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => RegisterPage()),
-                        );
+                      );
                     },
                     child: Text(
                       "S'inscrire",
@@ -199,7 +251,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-   _successMessage(BuildContext context) {
+  _successMessage(BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: Duration(seconds: 4),
@@ -229,6 +281,56 @@ class _LoginFormState extends State<LoginForm> {
                     Spacer(),
                     Text(
                       "Connexion réussie",
+                      style: GoogleFonts.poppins(
+                        color: TColors.textWhite,
+                        fontSize: 15,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        elevation: 3,
+      ),
+    );
+  }
+
+  _errorMessage(BuildContext context) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 4),
+        content: Container(
+          padding: const EdgeInsets.all(8.0),
+          height: 90,
+          decoration: const BoxDecoration(
+            color: TColors.error,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.check_circle, color: TColors.textWhite, size: 40),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Connexion échoué",
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        color: TColors.textWhite,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      "Vérifiez votre email ou votre mot de passe",
                       style: GoogleFonts.poppins(
                         color: TColors.textWhite,
                         fontSize: 15,
